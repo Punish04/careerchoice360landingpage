@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Briefcase, GraduationCap, TrendingUp, Globe2, type LucideIcon } from "lucide-react";
 import { MotionSection } from "@/components/layout/MotionSection";
 
@@ -39,13 +39,13 @@ const PROGRAMS: Program[] = [
 export const Programs = () => {
   const reduce = useReducedMotion();
 
-  const container = {
+  const container: Variants = {
     hidden: {},
     show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
   };
-  const item = {
+  const item: Variants = {
     hidden: { opacity: 0, y: reduce ? 0 : 24 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const } },
   };
 
   return (
