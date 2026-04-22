@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MagneticButton } from "@/components/ui-custom/MagneticButton";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo.jpg";
 
 const NAV_LINKS = [
   { label: "Programs", href: "#programs" },
@@ -41,10 +41,7 @@ export const Navbar = () => {
     >
       <div className="container flex h-16 items-center justify-between md:h-20">
         <a href="#top" className="flex items-center gap-2.5" aria-label="CareerChoice360 home">
-          <img src={logo} alt="CareerChoice360 logo" width={36} height={36} className="h-9 w-9" />
-          <span className="hidden sm:inline text-base font-semibold tracking-tight">
-            CareerChoice<span className="text-primary-glow">360</span>
-          </span>
+          <img src={logo} alt="CareerChoice360 logo" className="h-10 w-auto rounded-md object-contain" />
         </a>
 
         <nav className="hidden md:flex items-center gap-8" aria-label="Primary">

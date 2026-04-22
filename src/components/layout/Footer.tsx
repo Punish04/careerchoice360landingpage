@@ -1,5 +1,5 @@
 import { Linkedin, Instagram, Facebook, Youtube, Mail, Phone, MapPin } from "lucide-react";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo.jpg";
 
 const QUICK_LINKS = [
   { label: "Programs", href: "#programs" },
@@ -34,10 +34,7 @@ export const Footer = () => {
           {/* Brand */}
           <div className="lg:col-span-1">
             <a href="#top" className="flex items-center gap-2.5" aria-label="CareerChoice360 home">
-              <img src={logo} alt="CareerChoice360 logo" width={36} height={36} className="h-9 w-9" loading="lazy" />
-              <span className="text-base font-semibold tracking-tight">
-                CareerChoice<span className="text-primary-glow">360</span>
-              </span>
+              <img src={logo} alt="CareerChoice360 logo" className="h-10 w-auto rounded-md object-contain" loading="lazy" />
             </a>
             <p className="mt-4 text-sm text-muted-foreground max-w-xs">
               Premium MBA & PGDM admissions consultancy, mentoring future leaders into India's
