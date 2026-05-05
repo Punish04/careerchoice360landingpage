@@ -1,9 +1,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useState } from "react";
-import { Loader2, Send } from "lucide-react";
-import { toast } from "sonner";
+import { useRef } from "react";
+import { Send } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,7 +16,6 @@ import {
 } from "@/components/ui/select";
 import { MagneticButton } from "@/components/ui-custom/MagneticButton";
 
-/** Zod schema with Indian phone validation. */
 const enquirySchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(60, "Too long"),
   email: z.string().trim().email("Enter a valid email"),
@@ -36,12 +34,11 @@ interface EnquiryFormProps {
 }
 
 export const EnquiryForm = ({ compact = false }: EnquiryFormProps) => {
-  const [submitting, setSubmitting] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const {
     register,
     handleSubmit,
-    reset,
     setValue,
     watch,
     formState: { errors },
@@ -52,27 +49,33 @@ export const EnquiryForm = ({ compact = false }: EnquiryFormProps) => {
 
   const examValue = watch("exam");
 
-  const onSubmit = async (values: EnquiryValues) => {
-    setSubmitting(true);
-    // Simulate network call — wire to backend later.
-    await new Promise((r) => setTimeout(r, 900));
-    setSubmitting(false);
-    toast.success("Thanks! Our counselor will reach out within 24 hours.", {
-      description: `We've received your enquiry, ${values.name.split(" ")[0]}.`,
-    });
-    reset();
+  const onValid = () => {
+    formRef.current?.submit();
   };
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      ref={formRef}
+      onSubmit={handleSubmit(onValid)}
+      action="https://formsubmit.co/apunish4@gmail.com"
+      method="POST"
       noValidate
       className="space-y-4"
       aria-label="Quick enquiry form"
     >
+      {/* FormSubmit hidden fields */}
+      <input type="hidden" name="_subject" value="New Student Enquiry" />
+      <input type="hidden" name="_captcha" value="false" />
+      <input type="hidden" name="_template" value="table" />
+
       <div className="space-y-1.5">
-        <Label htmlFor="name">Full name</Label>
-        <Input id="name" placeholder="Aarav Sharma" {...register("name")} />
+        <Label htmlFor="enq-name">Full name</Label>
+        <Input
+          id="enq-name"
+          placeholder="Aarav Sharma"
+          {...register("name")}
+          name="name"
+        />
         {errors.name && (
           <p className="text-xs text-destructive" role="alert">
             {errors.name.message}
@@ -82,8 +85,14 @@ export const EnquiryForm = ({ compact = false }: EnquiryFormProps) => {
 
       <div className={compact ? "space-y-4" : "grid gap-4 sm:grid-cols-2"}>
         <div className="space-y-1.5">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="you@example.com" {...register("email")} />
+          <Label htmlFor="enq-email">Email</Label>
+          <Input
+            id="enq-email"
+            type="email"
+            placeholder="you@example.com"
+            {...register("email")}
+            name="email"
+          />
           {errors.email && (
             <p className="text-xs text-destructive" role="alert">
               {errors.email.message}
@@ -91,8 +100,14 @@ export const EnquiryForm = ({ compact = false }: EnquiryFormProps) => {
           )}
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="phone">Phone</Label>
-          <Input id="phone" inputMode="tel" placeholder="+91 98XXXXXXXX" {...register("phone")} />
+          <Label htmlFor="enq-phone">Phone</Label>
+          <Input
+            id="enq-phone"
+            inputMode="tel"
+            placeholder="+91 98XXXXXXXX"
+            {...register("phone")}
+            name="phone"
+          />
           {errors.phone && (
             <p className="text-xs text-destructive" role="alert">
               {errors.phone.message}
@@ -102,9 +117,14 @@ export const EnquiryForm = ({ compact = false }: EnquiryFormProps) => {
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="exam">Target exam</Label>
-        <Select value={examValue} onValueChange={(v) => setValue("exam", v, { shouldValidate: true })}>
-          <SelectTrigger id="exam" aria-invalid={!!errors.exam}>
+        <Label htmlFor="enq-exam">Target exam</Label>
+        {/* Hidden input so FormSubmit receives the exam value */}
+        <input type="hidden" name="exam" value={examValue} />
+        <Select
+          value={examValue}
+          onValueChange={(v) => setValue("exam", v, { shouldValidate: true })}
+        >
+          <SelectTrigger id="enq-exam" aria-invalid={!!errors.exam}>
             <SelectValue placeholder="Select exam" />
           </SelectTrigger>
           <SelectContent>
@@ -126,12 +146,13 @@ export const EnquiryForm = ({ compact = false }: EnquiryFormProps) => {
 
       {!compact && (
         <div className="space-y-1.5">
-          <Label htmlFor="message">Message (optional)</Label>
+          <Label htmlFor="enq-message">Message (optional)</Label>
           <Textarea
-            id="message"
+            id="enq-message"
             rows={3}
             placeholder="Tell us about your goals…"
             {...register("message")}
+            name="message"
           />
           {errors.message && (
             <p className="text-xs text-destructive" role="alert">
@@ -141,16 +162,8 @@ export const EnquiryForm = ({ compact = false }: EnquiryFormProps) => {
         </div>
       )}
 
-      <MagneticButton type="submit" disabled={submitting} className="w-full">
-        {submitting ? (
-          <>
-            <Loader2 className="animate-spin" /> Sending…
-          </>
-        ) : (
-          <>
-            <Send /> Request Free Evaluation
-          </>
-        )}
+      <MagneticButton type="submit" className="w-full">
+        <Send className="h-4 w-4" /> Request Free Evaluation
       </MagneticButton>
 
       <p className="text-[11px] text-muted-foreground text-center">
